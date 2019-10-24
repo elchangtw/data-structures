@@ -52,4 +52,14 @@ describe('linkedList', function() {
   });
 
   // add more tests here to test the functionality of linkedList
+  it('should not break if there are no values to remove', function() {
+    linkedList.removeHead();
+    expect(linkedList.removeHead()).to.equal(null);
+  });
+
+  it('should work on lists that have duplicates', function() {
+    linkedList.addToTail(4);
+    linkedList.addToTail(4);
+    expect(linkedList.contains(4)).to.equal(true);
+  });
 });

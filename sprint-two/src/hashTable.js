@@ -4,7 +4,6 @@ var HashTable = function() {
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
   this._usage = 0;
-  //this.otherStorage = LimitedArray(this._limit);
 };
 
 //var MAX_TUPLE_COUNT; //potentially to implement dynamic bucket size
@@ -26,7 +25,6 @@ HashTable.prototype.insert = function(k, v) {
   var tuple = [k, v];
   if (bucket === undefined) {
     bucket = [];
-    this._usage++;
   }
 
   if (this.findTuple(bucket, k) === undefined) {
@@ -35,8 +33,12 @@ HashTable.prototype.insert = function(k, v) {
     bucket[this.findTuple(bucket, k)][1] = v;
   }
 
+  this._usage++;
   this._storage.set(index, bucket);
-  if ((this._usage / this._limit) > .6) {
+  console.log(index);
+  console.log(this._storage.get(index));
+
+  if ((this._usage / this._limit) > (3/4)) {
     var newHash = [];
     for (var i = 0; i < this._limit; i++) {
       // get our current storage and place into new one
@@ -88,9 +90,9 @@ HashTable.prototype.remove = function(k) {
   var result;
   if (this.findTuple(bucket, k) !== undefined) {
     result = bucket.splice(this.findTuple(bucket, k), 1);
-    if (bucket.length === 0) {
-      this._usage--;
-    }
+  }
+  if (bucket.length === 0) {
+    this._usage--;
   }
   this._storage.set(index, bucket);
   return result;

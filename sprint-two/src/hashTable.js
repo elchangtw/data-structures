@@ -6,8 +6,6 @@ var HashTable = function() {
   this._usage = 0;
 };
 
-//var MAX_TUPLE_COUNT; //potentially to implement dynamic bucket size
-
 HashTable.prototype.findTuple = function(bucket, key) {
   var result;
   for (var i = 0; i < bucket.length; i++) {
@@ -35,17 +33,20 @@ HashTable.prototype.insert = function(k, v) {
 
   this._usage++;
   this._storage.set(index, bucket);
-  console.log(index);
-  console.log(this._storage.get(index));
+  //console.log(index);
+  //console.log(this._storage.get(index));
 
-  if ((this._usage / this._limit) > (3/4)) {
+  if ((this._usage / this._limit) > (3/4)) { // if usage goes over threshold
+    // create new hash table
+    
     var newHash = [];
     for (var i = 0; i < this._limit; i++) {
-      // get our current storage and place into new one
       newHash.push(this._storage.get(i)) === undefined ? newHash.push([]) : newHash.push(this._storage.get(i));
     }
-    this._storage = LimitedArray(this._limit * 2);
-    this._limit = this._limit * 2;
+    
+    this._limit = this._limit * 2;    
+    this._storage = LimitedArray(this._limit);
+    
     for (var i = 0; i < newHash.length; i++) {
       if (newHash[i] !== undefined && newHash[i].length > 0) {
         for (var j = 0; j < newHash[i].length; j++) {
@@ -60,22 +61,10 @@ HashTable.prototype.insert = function(k, v) {
       }
     }
   }
-  // var obj = {};
-  // var arr = [];
-  // obj[k] = v;
-  // if (this._storage.get(index)) {
-  //   _.extend(obj, this._storage.get(index));
-  // }
-
 };
 
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  // if (this._storage.get(index)[k]) {
-  //   return k;
-  // } else {
-  //   return false;
-  // }
   var bucket = this._storage.get(index);
   var result;
   if (this.findTuple(bucket, k) !== undefined) {
